@@ -1,5 +1,0 @@
-1순위: Heap Priority Queue Analysis (예상 45분)
-2순위: Character Counting Program Optimization (예상 90분)
-3순위: Human Coding and Compression Size Estimation (예상 30분)
-1순위: Binary Search Tree Letter Probability (예상 60분)
-2순위: Huffman Coding and Optimal Tree Construction (Application) (예상 75분)
