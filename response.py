@@ -1,4 +1,8 @@
 import json
+import sys
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 response = '''
 [
@@ -37,7 +41,25 @@ response = '''
 
 study_plan = json.loads(response)
 
-
 with open("today_plan.txt", "w", encoding="utf-8") as f:
     for task in study_plan:
         f.write(f"{task['priority']}순위: {task['topic']} (예상 {task['estimated_time']}분)\n")
+
+def recommend_today_plan(plan, available_minutes):
+    today_plan = []
+    used = 0
+    # priority 기준 정렬
+    sorted_plan = sorted(plan, key=lambda x: x["priority"])
+    for task in sorted_plan:
+        if used + task["estimated_time"] <= available_minutes:
+            today_plan.append(task)
+            used += task["estimated_time"]
+    return today_plan
+
+# 예: 오늘 90분 공부 가능
+available_time = 90
+today_plan = recommend_today_plan(study_plan, available_time)
+
+print(f"\n✅ 오늘 공부 계획 (총 {available_time}분 가능):\n")
+for task in today_plan:
+    print(f"- {task['topic']} ({task['estimated_time']}분)")
