@@ -1,7 +1,7 @@
 pdf_utils_1.py - pdf 파일 추출해서 output.txt로 변환
-file_io.py - 학습 계획 데이터를 JSON 파일로 저장하거나 불러오는 기능만 따로 맡는 도우미 파일
+file_io_2.py - 학습 계획 데이터를 JSON 파일로 저장하거나 불러오는 기능만 따로 맡는 도우미 파일
            - 파일 입출력만 전담
-plan_utils.py - 
+plan_utils_3.py - 
 1. plan 리스트를 순서로 정렬
 2. available_minutes를 초과하지 않는 범위에서
 3. 하나씩 today_plan에 담음
@@ -13,5 +13,4 @@ plan_utils.py -
 
 [전체 계획] → [AI 추천 목록] →  
 👉 [사용자가 고른 오늘의 계획 today_selected] →  
-✅ [실제로 완료한 항목 done_tasks] →  
-📦 저장 + 남은 계획 업데이트
+✅ [실제로 완료한 항목 done_tasks] → 📦 저장 + 남은 계획 업데이트
