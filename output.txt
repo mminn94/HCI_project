@@ -1,18 +1,22 @@
-Algorithm Analysis Homework 8
-May 16 (Due next Tuesday class)
-1. To ﬁnd strongly connected components of a directed graph G, Kosaraju’s double DFS al-
-gorithm starts a DFS from a vertex in a sink component, and to do so the algorithm ﬁrst
-computes ﬁnish times with respect to DFS(GT ).
-(a) Can we ﬁnd a vertex in a sink component with DFS(G) instead? For example, for a
-DAG, if we perform a DFS, then the vertex with the smallest ﬁnish time is a sink. So, we
-could hypothesize that the vertex with the smallest ﬁnish time with respect to DFS(G)
-is in a sink component. Verify the hypothesis by performing DFS on the graph in Fig. 7.
-(b) Can we ﬁnd a vertex in a source component using a DFS? Recall that the vertex with
-the largest ﬁnish time is a source vertex for a DAG. Now, is the vertex with the largest
-ﬁnish time in a source component of a directed graph? Verify this by performing DFSs
-on the graph in Fig. 7 starting with
-(i) vertex a in the source component,
-(ii) vertex e in the sink component,
-(iii) vertex h in a component that is neither source nor sink.
-(c) Explain why Kosaraju’s algorithm ﬁrst computes ﬁnish times with respect to DFS(GT ).
-96
+Algorithm Analysis Homework 9
+May 23 (Due next Tuesday class)
+1. Our discussion of Dijkstra’s shortest-path algorithm used a heap-based priority queue. When
+the algorithm runs, three heap operations are used, namely, push(), pop() and changeKey().
+Note that changeKey() is used when d[v] is updated in the following for-loop:
+for each neighbor v (in Q) of u
+if d[u]+w(u,v) < d[v]
+// if newly added vertex u makes v closer
+d[v] <- d[u]+w(u,v)
+// update the distance (which updates Q)
+parent[v] <- u
+Explain, in less than ﬁve lines, how these three operations run in O(log n) time when a
+priority queue has n elements.
+2. In Section 6.6.1, we discussed the matirx
+A→= I →A →A2 →A3.
+(a) What does (i, j)th element of A→represent?
+(b) Does the usage of ↑in A→make sense? Why did we not deﬁne as follows?
+A→= I →A →A2 →A3 →A4 →· · · .
+3. Consider the following graph:
+Floyd’s all-pairs shortest distance algorithm gives matrices D(5) and P, as we discussed in
+the class. Figure out the matrices D(5) and P without using the algorithm :)
+103
