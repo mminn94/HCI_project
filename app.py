@@ -4,6 +4,7 @@ import os
 import requests
 import json
 from pdf_utils_1 import extract_text_from_pdf, save_text_to_file
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -26,7 +27,7 @@ def upload_pdf():
     text = extract_text_from_pdf(filepath)
     save_text_to_file(text)
 
-    # 1️⃣ Ollama에게 요약 요청
+    # Ollama에게 요약 요청
     prompt_summary = f"아래 내용을 한국어로 요약해줘:\n{text}"
     headers = {"Content-Type": "application/json"}
     data_summary = {
@@ -47,11 +48,24 @@ def upload_pdf():
             obj = json.loads(line.decode("utf-8"))
             final_summary += obj.get("response", "")
 
+    # 계획 짜줌
     prompt_plan = f"""
     아래 내용을 바탕으로, 이 과목의 학습 계획을 짜줘.
+    큰 항목(예: 과목, 큰 챕터)은 "1.", "2."처럼 번호를 붙여서 구분해줘.
+    최종 결과는 아래 처럼 번호 있는 큰 항목들만 따로 선택할 수 있도록 해줘 !
+    예)
+    1. 힙 정렬 (약 1시간)
+    * 이론 학습: 힙의 개념
+    * 실습: 힙 구현 실습
+    
+    2. 해시 테이블 (약 2시간)
+    * 이론 학습: 충돌 처리
+    * 실습: 해시 구현 실습
+
     각 항목마다 줄바꿈(\n)을 포함해서 보기 좋게 정리해줘.
     내용: {final_summary}
     """
+
     data_plan = {
         "model": MODEL,
         "prompt": prompt_plan
@@ -86,6 +100,8 @@ def update_plan():
 
     prompt_update = f"""
     아래의 학습 계획을 참고해서, 사용자의 피드백을 반영해서 새롭게 계획을 다시 짜줘.
+    큰 항목은 "1.", "2."처럼 번호를 붙여서 구분해줘.
+    큰 항목 아래의 세부 설명은 그냥 줄로 써줘.
     사용자 피드백: {feedback}
     현재 학습 계획: {current_plan}
     각 항목마다 줄바꿈(\n)으로 정리해줘.
@@ -115,24 +131,61 @@ def update_plan():
         "updated_plan": updated_plan
     })
 
+@app.route('/api/today-plan', methods=['GET'])
+def get_today_plan():
+    today = datetime.now().strftime('%Y-%m-%d')
+    file_path = f"data/{today}_today_plan.json"
+    
+    if not os.path.exists(file_path):
+        return jsonify({"todayTasks": []})
+    
+    with open(file_path, 'r', encoding='utf-8') as f:
+        today_tasks = json.load(f)
+    
+    return jsonify({"todayTasks": today_tasks})
+
+@app.route('/api/today-plan', methods=['POST'])
+def save_today_plan():
+    data = request.json
+    today_tasks = data.get('todayTasks', [])
+    if not today_tasks:
+        return jsonify({"message": "오늘 할 일 목록이 비어있어요!"}), 400
+    
+    today = datetime.now().strftime('%Y-%m-%d')
+    file_path = f"data/{today}_today_plan.json"
+    
+    with open(file_path, 'w', encoding='utf-8') as f:
+        json.dump(today_tasks, f, ensure_ascii=False, indent=2)
+    
+    return jsonify({"message": "오늘 할 일 저장 완료!"})
+
 @app.route("/api/done-today", methods=["POST"])
 def done_today():
     data = request.get_json()
     done_tasks = data.get("doneTasks")
 
-    with open("done_today.json", "w", encoding="utf-8") as f:
+    today = datetime.now().strftime('%Y-%m-%d')
+
+    # 오늘 완료 항목 저장
+    done_file = f"data/{today}_done_today.json"
+    with open(done_file, "w", encoding="utf-8") as f:
         json.dump(done_tasks, f, ensure_ascii=False, indent=2)
 
-    with open("study_plan.json", "r", encoding="utf-8") as f:
+    study_plan_file = f"data/{today}_today_plan.json"
+    if not os.path.exists(study_plan_file):
+        study_plan_file = "data/{today}_today_plan.json"
+
+    with open(study_plan_file, "r", encoding="utf-8") as f:
         study_plan = json.load(f)
 
     remaining_plan = [task for task in study_plan if task not in done_tasks]
 
-    with open("remaining_plan.json", "w", encoding="utf-8") as f:
+    remaining_file = f"data/{today}_remaining_plan.json"
+    with open(remaining_file, "w", encoding="utf-8") as f:
         json.dump(remaining_plan, f, ensure_ascii=False, indent=2)
 
     return jsonify({
-        "message": "오늘 완료 항목 저장 & 남은 계획 갱신 완료!",
+        "message": f"{today} 완료 항목 저장 & 남은 계획 갱신 완료!",
         "remaining_plan": remaining_plan
     })
 
