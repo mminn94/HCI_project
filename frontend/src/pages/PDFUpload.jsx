@@ -38,7 +38,7 @@ function PDFUpload() {
 
   return (
     <div className="p-4 max-w-md mx-auto">
-      <h2 className="text-lg font-semibold mb-2">📁 PDF 업로드</h2>
+      <h2 className="text-[30px] font-bold mb-2">📁 PDF 업로드</h2>
 
       <input type="file" onChange={handleFileChange}
       className=" file:mr-4 file:py-2 file:px-4 file:font-base file:bg-gray-50 hover:file:bg-gray-200 file:rounded-xl"/>

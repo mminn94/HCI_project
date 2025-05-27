@@ -36,7 +36,7 @@ function PlanFeedback({ updatedPlan }) {
       <div className="ml-5 mt-2">
         {planLines.map((line, index) => {
           const trimmedLine = line.trim();
-          const isMainTask = /^\d+\./.test(trimmedLine);
+          const isMainTask = /(\*+)?\s*\d+\./.test(trimmedLine);
 
           if (isMainTask) {
             return (

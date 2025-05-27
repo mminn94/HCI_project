@@ -12,7 +12,12 @@ function CalendarPage() {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    const dateString = date.toISOString().slice(0, 10);
+    const pad = (num) => String(num).padStart(2, "0");
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const dateString = `${year}-${month}-${day}`;
+
     console.log("선택된 날짜:", dateString);
     fetchHistory(dateString);
   };
@@ -31,7 +36,7 @@ function CalendarPage() {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">📅 캘린더</h2>
+      <h2 className="text-[30px] font-bold mb-4">📅 캘린더</h2>
       <Calendar onChange={handleDateChange} value={selectedDate} />
 
       {doneTasks.length > 0 && (
