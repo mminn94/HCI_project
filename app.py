@@ -28,7 +28,16 @@ def upload_pdf():
     save_text_to_file(text)
 
     # Ollama에게 요약 요청
-    prompt_summary = f"아래 내용을 한국어로 요약해줘:\n{text}"
+    prompt_summary = f"""
+    아래 내용을 한국어로 요약해줘:\n
+    내용:
+    {text}
+
+    작성 시 주의사항:
+    큰 항목은 "1.","2."처럼 번호를 붙여서 정리해줘.
+    각 항목마다 줄바꿈(\n)을 포함해서 보기 좋게 정리해줘.
+    """
+
     headers = {"Content-Type": "application/json"}
     data_summary = {
         "model": MODEL,
@@ -50,8 +59,14 @@ def upload_pdf():
 
     # 계획 짜줌
     prompt_plan = f"""
-    아래 내용을 바탕으로, 이 과목의 학습 계획을 짜줘.
-    큰 항목(예: 과목, 큰 챕터)은 "1.", "2."처럼 번호를 붙여서 구분해줘.
+    아래 내용을 바탕으로, 이 과목의 학습 계획을 작성해줘.
+    
+    학습 내용 요약:
+    {final_summary}
+
+    작성 시 주의사항:
+    큰 항목(예: 과목, 큰 챕터)은 "1.", "2."처럼 번호를 붙여서 작성해줘.
+    각 항목의 세부 내용은 줄로 구분해줘.
     최종 결과는 아래 처럼 번호 있는 큰 항목들만 따로 선택할 수 있도록 해줘 !
     예)
     1. 힙 정렬 (약 1시간)
@@ -63,7 +78,6 @@ def upload_pdf():
     * 실습: 해시 구현 실습
 
     각 항목마다 줄바꿈(\n)을 포함해서 보기 좋게 정리해줘.
-    내용: {final_summary}
     """
 
     data_plan = {
@@ -99,12 +113,18 @@ def update_plan():
     current_plan = data.get("currentPlan")
 
     prompt_update = f"""
-    아래의 학습 계획을 참고해서, 사용자의 피드백을 반영해서 새롭게 계획을 다시 짜줘.
+    아래의 학습 계획을 참고해서, 사용자의 피드백을 반영해서 새롭게 계획을 다시 작성해줘.
+
+    기존 학습 계획:
+    {current_plan}
+
+    사용자 피드백:
+    {feedback}
+
+    작성 시 주의사항:
     큰 항목은 "1.", "2."처럼 번호를 붙여서 구분해줘.
-    큰 항목 아래의 세부 설명은 그냥 줄로 써줘.
-    사용자 피드백: {feedback}
-    현재 학습 계획: {current_plan}
-    각 항목마다 줄바꿈(\n)으로 정리해줘.
+    각 항목의 세부 내용은 줄로 구분해줘.
+    각 항목마다 줄바꿈(\n)을 넣어서 보기 좋게 정리해줘.
     """
 
     headers = {"Content-Type": "application/json"}
@@ -188,6 +208,26 @@ def done_today():
         "message": f"{today} 완료 항목 저장 & 남은 계획 갱신 완료!",
         "remaining_plan": remaining_plan
     })
+
+@app.route("/api/history/<date>", methods=["GET"])
+def get_history(date):
+    folder = "data"
+    today_plan_file = f"{folder}/{date}_today_plan.json"
+    done_today_file = f"{folder}/{date}_done_today.json"
+    remaining_plan_file = f"{folder}/{date}_remaining_plan.json"
+
+    def read_json(file):
+        if os.path.exists(file):
+            with open(file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return []
+
+    return jsonify({
+        "todayTasks": read_json(today_plan_file),
+        "doneTasks": read_json(done_today_file),
+        "remainingPlan": read_json(remaining_plan_file),
+    })
+
 
 
 if __name__ == "__main__":
