@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import PlanContainer from "./PlanContainer";
-import PlanFeedback from "./PlanFeedback";
+import { useNavigate } from "react-router-dom";
+import PlanContainer from "../components/PlanContainer";
+import PlanFeedback from "../components/PlanFeedback";
 
 function PDFUpload() {
   const [file, setFile] = useState(null);
@@ -9,6 +10,7 @@ function PDFUpload() {
   const [summary, setSummary] = useState("");
   const [studyPlan, setStudyPlan] = useState("");
   const [updatedPlan, setUpdatedPlan] = useState("");
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
@@ -53,6 +55,11 @@ function PDFUpload() {
       />
 
       <PlanFeedback updatedPlan={updatedPlan} />
+
+      <button onClick={() => navigate("/")}
+        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4 mb-4">
+        홈으로 돌아가기
+      </button>
     </div>
   );
 }

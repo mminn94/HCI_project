@@ -154,15 +154,20 @@ def update_plan():
 @app.route('/api/today-plan', methods=['GET'])
 def get_today_plan():
     today = datetime.now().strftime('%Y-%m-%d')
-    file_path = f"data/{today}_today_plan.json"
+    remaining_file_path = f"data/{today}_remaining_plan.json"
+    today_file_path = f"data/{today}_today_plan.json"
     
-    if not os.path.exists(file_path):
-        return jsonify({"todayTasks": []})
+    if os.path.exists(remaining_file_path):
+        with open(remaining_file_path, 'r', encoding='utf-8') as f:
+            tasks = json.load(f)
+
+    elif os.path.exists(today_file_path):
+        with open(today_file_path, 'r', encoding='utf-8') as f:
+            tasks = json.load(f)
+    else:
+        tasks = []
     
-    with open(file_path, 'r', encoding='utf-8') as f:
-        today_tasks = json.load(f)
-    
-    return jsonify({"todayTasks": today_tasks})
+    return jsonify({"todayTasks": tasks})
 
 @app.route('/api/today-plan', methods=['POST'])
 def save_today_plan():
@@ -227,8 +232,6 @@ def get_history(date):
         "doneTasks": read_json(done_today_file),
         "remainingPlan": read_json(remaining_plan_file),
     })
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)

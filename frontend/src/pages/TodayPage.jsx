@@ -48,13 +48,6 @@ function TodayPage() {
     <div className="p-4">
       <h2 className="text-xl font-bold mb-2">📌 오늘 할 일</h2>
 
-      <button
-        onClick={() => navigate("/")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mb-4"
-      >
-        돌아가기
-      </button>
-
       {todayTasks.length === 0 ? (
         <p className="mt-2">오늘 할 일이 아직 없습니다.</p>
       ) : (
@@ -80,6 +73,12 @@ function TodayPage() {
           완료 항목 저장하기
         </button>
       )}
+
+      <button
+        onClick={() => navigate("/")}
+        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 ml-6">
+        홈으로 돌아가기
+      </button>
     </div>
   );
 }
