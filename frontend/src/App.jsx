@@ -4,6 +4,7 @@ import PDFUpload from "./pages/PDFUpload";
 import TodayPage from './pages/TodayPage';
 import Calendar from 'react-calendar';
 import CalendarPage from './pages/CalendarPage';
+import QuizPage from './pages/QuizPage';
 
 import MainPage from './pages/MainPage';
 
@@ -16,6 +17,7 @@ function App() {
           <Route path="/upload" element={<PDFUpload />} />
           <Route path="/today" element={<TodayPage />} />
           <Route path='/calendar' element={<CalendarPage />}/>
+          <Route path='/quiz' element= {<QuizPage />}/>
         </Routes>
       </div>
     </Router>

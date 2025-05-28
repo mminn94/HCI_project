@@ -35,12 +35,37 @@ function TodayPage() {
       });
       console.log(res.data.message);
       setTodayTasks(res.data.remaining_plan || []);
-      
       console.log("남은 계획:", res.data.remaining_plan);
       alert("오늘 완료 항목이 저장되었어요!");
     } catch (err) {
       console.error(err);
       alert("저장 실패!");
+    }
+  };
+
+  const handleDeleteTask = async (task) => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/delete-today-task", {
+        task,
+      });
+      console.log(res.data.message);
+      setTodayTasks(res.data.updatedTasks || []);
+    } catch (err) {
+      console.error(err);
+      alert("삭제 실패!");
+    }
+  };
+
+  const handleDeferTask = async (task) => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/defer-today-task", {
+        task,
+      });
+      console.log(res.data.message);
+      setTodayTasks(res.data.updatedTasks || []);
+    } catch (err) {
+      console.error(err);
+      alert("미루기 실패!");
     }
   };
 
@@ -60,24 +85,38 @@ function TodayPage() {
                 onChange={() => handleCheckboxChange(task)}
                 className="mr-2"
               />
-              <span>{task}</span>
+              <span className="flex-1">{task}</span>
+              <button
+                onClick={() => handleDeleteTask(task)}
+                className="px-4 py-1 text-gray rounded ml-4">
+                ❎ 삭제 | Delete
+              </button>
+
+              <button
+                onClick={() => handleDeferTask(task)}
+                className="px-4 py-1 text-gray rounded ml-6">
+                🔜 미루기 | Delay
+              </button>
             </li>
           ))}
         </ul>
       )}
 
       {todayTasks.length > 0 && (
-        <button
-          onClick={handleDoneTodaySubmit}
-          className="mt-4 px-4 py-1 text-gray rounded bg-green-300 hover:bg-green-400">
-          완료 항목 저장하기
-        </button>
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={handleDoneTodaySubmit}
+            className="px-4 py-1 text-gray rounded bg-green-300 hover:bg-green-400">
+            ✅ 완료 항목 저장하기 | Submit
+          </button>
+        </div>
       )}
+
 
       <button
         onClick={() => navigate("/")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 ml-6 mt-4">
-        홈으로 돌아가기
+        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4">
+        🏠 홈으로 돌아가기 | Home
       </button>
     </div>
   );

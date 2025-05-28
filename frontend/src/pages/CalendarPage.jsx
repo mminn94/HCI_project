@@ -67,7 +67,7 @@ function CalendarPage() {
 
       <button onClick={() => navigate("/")}
         className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4 mb-4">
-        홈으로 돌아가기
+        🏠 홈으로 돌아가기 | Home
       </button>
     </div>
   );

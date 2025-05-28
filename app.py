@@ -4,7 +4,7 @@ import os
 import requests
 import json
 from pdf_utils_1 import extract_text_from_pdf, save_text_to_file
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 KST = pytz.timezone('Asia/Seoul')
@@ -257,6 +257,65 @@ def done_today():
         "message": f"{today} 완료 항목 append & 남은 계획 갱신 완료!",
         "remaining_plan": remaining_plan
     })
+
+@app.route("/api/delete-today-task", methods=["POST"])
+def delete_today_task():
+    data = request.get_json()
+    task_to_delete = data.get("task")
+
+    today = datetime.now(KST).strftime('%Y-%m-%d')
+    today_file = f"data/{today}_today_plan.json"
+    remaining_file = f"data/{today}_remaining_plan.json"
+
+    for file_path in [today_file, remaining_file]:
+        if os.path.exists(file_path):
+            with open(file_path, "r", encoding="utf-8") as f:
+                tasks = json.load(f)
+            if task_to_delete in tasks:
+                tasks.remove(task_to_delete)
+                with open(file_path, "w", encoding="utf-8") as f:
+                    json.dump(tasks, f, ensure_ascii=False, indent=2)
+
+    return jsonify({"message": f"'{task_to_delete}' 삭제 완료!", "updatedTasks": tasks})
+
+@app.route("/api/defer-today-task", methods=["POST"])
+def defer_today_task():
+    data = request.get_json()
+    task_to_defer = data.get("task")
+
+    today = datetime.now(KST).strftime('%Y-%m-%d')
+    tomorrow = (datetime.now(KST) + timedelta(days=1)).strftime('%Y-%m-%d')
+
+    # 오늘 파일에서 삭제
+    today_file = f"data/{today}_today_plan.json"
+    remaining_file = f"data/{today}_remaining_plan.json"
+    for file_path in [today_file, remaining_file]:
+        if os.path.exists(file_path):
+            with open(file_path, "r", encoding="utf-8") as f:
+                tasks = json.load(f)
+            if task_to_defer in tasks:
+                tasks.remove(task_to_defer)
+                with open(file_path, "w", encoding="utf-8") as f:
+                    json.dump(tasks, f, ensure_ascii=False, indent=2)
+
+    # 내일 파일에 추가
+    tomorrow_file = f"data/{tomorrow}_today_plan.json"
+    tomorrow_remaining_file = f"data/{tomorrow}_remaining_plan.json"
+    for file_path in [tomorrow_file, tomorrow_remaining_file]:
+        if os.path.exists(file_path):
+            with open(file_path, "r", encoding="utf-8") as f:
+                tomorrow_tasks = json.load(f)
+        else:
+            tasks = []
+
+    if task_to_defer not in tasks:
+        tasks.append(task_to_defer)
+
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(tasks, f, ensure_ascii=False, indent=2)
+
+    return jsonify({"message": f"'{task_to_defer}'를 내일로 미뤘습니다!", "updatedTasks": tasks})
+
 
 @app.route("/api/history/<date>", methods=["GET"])
 def get_history(date):
