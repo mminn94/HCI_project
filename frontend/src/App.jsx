@@ -5,7 +5,6 @@ import TodayPage from './pages/TodayPage';
 import Calendar from 'react-calendar';
 import CalendarPage from './pages/CalendarPage';
 import QuizPage from './pages/QuizPage';
-
 import MainPage from './pages/MainPage';
 
 function App() {

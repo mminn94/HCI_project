@@ -336,5 +336,45 @@ def get_history(date):
         "remainingPlan": read_json(remaining_plan_file),
     })
 
+
+@app.route("/api/chat", methods=["POST"])
+def chat():
+    data = request.get_json()
+    message = data.get("message", "")
+    history = data.get("history", [])
+    topic = data.get("topic", "")
+
+    # 1️⃣ 히스토리를 문자열로 합치기
+    context_text = "\n".join(history)
+    prompt = f"""
+    주제: {topic}
+    아래는 이전 대화 기록입니다:
+    {context_text}
+
+    사용자 질문: {message}
+    답변:
+    """
+
+    # 2️⃣ Ollama API에 요청 보내기
+    payload = {
+        "model": MODEL,
+        "prompt": prompt
+    }
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.post(OLLAMA_URL, headers=headers, data=json.dumps(payload))
+    response.raise_for_status()
+
+
+    # Ollama 응답에서 답변 텍스트 꺼내기
+    lines = response.text.strip().split("\n")
+    final_response = ""
+    for line in lines:
+        line_data = json.loads(line)
+        final_response += line_data.get("response", "")
+
+    return jsonify({"response": final_response})
+
+
 if __name__ == "__main__":
     app.run(debug=True)

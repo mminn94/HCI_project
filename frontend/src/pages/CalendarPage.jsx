@@ -36,7 +36,7 @@ function CalendarPage() {
 
   return (
     <div className="p-4">
-      <h2 className="text-[30px] font-bold mb-4">📅 캘린더</h2>
+      <h2 className="text-[30px] font-bold mb-4">📅 캘린더 | Calendar</h2>
       <Calendar onChange={handleDateChange} value={selectedDate} />
 
       {doneTasks.length > 0 && (

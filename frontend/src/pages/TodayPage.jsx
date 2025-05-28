@@ -71,7 +71,7 @@ function TodayPage() {
 
   return (
     <div className="p-4">
-      <h2 className="text-[30px] font-bold mb-2">📌 오늘 할 일</h2>
+      <h2 className="text-[30px] font-bold mb-2">📌 오늘 할 일 | Today's Plan</h2>
 
       {todayTasks.length === 0 ? (
         <p className="mt-5">오늘 할 일이 아직 없습니다.</p>

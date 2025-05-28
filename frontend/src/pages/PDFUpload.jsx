@@ -37,15 +37,16 @@ function PDFUpload() {
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h2 className="text-[30px] font-bold mb-2">📁 PDF 업로드</h2>
+    <div className="p-4 max-w-lg mx-auto">
+      <h2 className="text-[30px] font-bold mb-2">📁 PDF 업로드 | Upload your File</h2>
 
       <input type="file" onChange={handleFileChange}
       className=" file:mr-4 file:py-2 file:px-4 file:font-base file:bg-gray-50 hover:file:bg-gray-200 file:rounded-xl"/>
 
       <button onClick={handleUpload} className="px-4 py-1 text-gray rounded">
-        업로드
+        업로드 | Upload
       </button>
+      
       {message && <p className="mt-4">{message}</p>}
 
       <PlanContainer
@@ -57,7 +58,7 @@ function PDFUpload() {
       <PlanFeedback updatedPlan={updatedPlan} />
 
       <button onClick={() => navigate("/")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4 mb-4">
+        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4 mb-4 ml-">
         🏠 홈으로 돌아가기 | Home
       </button>
     </div>
