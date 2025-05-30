@@ -66,8 +66,8 @@ function ShortTermPage() {
   };
 
   return (
-    <div className="p-4 max-w-lg">
-      <h2 className="text-2xl font-bold mb-4">⏱️ 단기 계획 생성 | Short-term Plan</h2>
+    <div className="p-4">
+      <h2 className="text-[30px] font-bold mb-4">⏱️ 단기 계획 생성 | Short-term Plan</h2>
 
       <FileUpload
         uploadUrl="http://localhost:5000/api/upload"
@@ -88,23 +88,25 @@ function ShortTermPage() {
 
       <button
         onClick={handleGeneratePlan}
-        className="px-4 py-2 rounded mb-2">
+        className="px-4 py-2 rounded mb-4">
         AI에게 짧은 계획 요청
       </button>
 
+    <div className="mb-4">
       {/* 요약 버튼 */}
       <button
         onClick={handleSummary}
-        className="px-4 py-2 rounded mb-2 ml-2">
+        className="px-4 py-2 rounded">
         📚 요약 보기
       </button>
 
       {/* 퀴즈 버튼 */}
       <button
         onClick={handleQuiz}
-        className="px-4 py-2 rounded mb-2 mr-2">
+        className="px-4 py-2 rounded ml-4">
         🧠 퀴즈 풀기
       </button>
+    </div>
 
       {/* 결과 표시 */}
       {shortPlan && (
@@ -130,7 +132,7 @@ function ShortTermPage() {
 
       <button
         onClick={() => navigate("/")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4">
+        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300">
         🏠 홈으로 돌아가기 | Home
       </button>
     </div>

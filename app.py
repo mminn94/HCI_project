@@ -223,21 +223,29 @@ def get_today_plan():
 @app.route('/api/today-plan', methods=['POST'])
 def save_today_plan():
     data = request.json
-    today_tasks = data.get('todayTasks', [])
-    if not today_tasks:
-        return jsonify({"message": "오늘 할 일 목록이 비어있어요!"}), 400
-    
+    new_tasks = data.get('todayTasks', [])
+
     today = datetime.now(KST).strftime('%Y-%m-%d')
-    today_file_path = f"data/{today}_today_plan.json"
-    remaining_file_path = f"data/{today}_remaining_plan.json"
+    today_file = f"data/{today}_today_plan.json"
+    remaining_file = f"data/{today}_remaining_plan.json"
 
-    with open(today_file_path, 'w', encoding='utf-8') as f:
-        json.dump(today_tasks, f, ensure_ascii=False, indent=2)
+    # 1️⃣ 기존 today 파일 읽기
+    if os.path.exists(today_file):
+        with open(today_file, 'r', encoding='utf-8') as f:
+            existing_tasks = json.load(f)
+    else:
+        existing_tasks = []
 
-    with open(remaining_file_path, 'w', encoding='utf-8') as f:
-        json.dump(today_tasks, f, ensure_ascii=False, indent=2)
+    # 2️⃣ 기존 + 새 항목 합치기 (중복 제거)
+    updated_tasks = existing_tasks + [task for task in new_tasks if task not in existing_tasks]
 
-    return jsonify({"message": "오늘 할 일 저장 완료!"})
+    # 3️⃣ 합쳐서 다시 저장
+    for file_path in [today_file, remaining_file]:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(updated_tasks, f, ensure_ascii=False, indent=2)
+
+    return jsonify({"message": "오늘 할 일(append) 저장 완료!", "todayTasks": updated_tasks})
+
 
 #오늘 완료 항목 저장
 @app.route("/api/done-today", methods=["POST"])
@@ -442,14 +450,23 @@ def generate_long_term_plan():
     아래는 내가 업로드한 자료 요약입니다:
     {text}
 
-    이 자료를 기반으로 아래 기간 동안 매일 {hours_per_day}시간씩 공부할 수 있도록 장기 계획을 작성해줘.
-    기간: {start_date} ~ {end_date}
+    이 자료를 바탕으로 {start_date} ~ {end_date} 동안 매일 {hours_per_day}시간씩 공부할 수 있도록 날짜별로 학습 계획을 작성해줘.
 
-    작성 시 주의사항:
-    - 각 날짜별로 학습 목표를 정리해줘.
-    - 번호와 줄바꿈(\n)을 포함해서 보기 좋게 정리해줘.
-    - 하루 단위로 계획을 나눠서 작성해줘.
-    - ** 같은 기호 쓰지 말아줘. (즉, 볼드 처리 하지 말아줘)
+    📌 작성 형식:
+    - 각 날짜는 "날짜: 계획 내용" 형태로 반드시 작성해줘. 예: "2025-06-01: 계획 내용..."
+    - 각 날짜마다 반드시 아래 항목들을 포함해줘:
+    1) 이론 학습: 어떤 이론을 공부할지
+    2) 실습/문제풀이: 어떤 실습/문제풀이를 할지
+    3) 목표/중점 사항: 오늘의 목표/중점 내용 (짧게라도 반드시 포함)
+    - 날짜별 계획은 줄바꿈(\\n)으로 깔끔하게 정리해줘.
+    - ** 같은 기호는 쓰지 말아줘 (볼드 처리하지 말아줘).
+    - 실제로 공부할 때 참고할 수 있도록 실용적으로 작성해줘.
+
+    예시:
+    2025-06-01: 이론: A 공부 / 실습: A 실습 / 목표: A 목표
+    2025-06-02: 이론: B 공부 / 실습: B 실습 / 목표: B 목표
+
+    작성해줘!
     """
 
     headers = {"Content-Type": "application/json"}

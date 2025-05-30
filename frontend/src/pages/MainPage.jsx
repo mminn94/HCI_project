@@ -7,7 +7,6 @@ function Home() {
       <h1 className="text-2xl font-bold text-center my-6 mb-10">📚 SmartStudy With AI</h1>
       <HowtouseButton />
       <TodayButton />
-      <PDFUploadButton />
       <CalendarButton />
       <LongTermButton />
       <ShortTermButton />
@@ -52,19 +51,6 @@ function CalendarButton() {
         onClick={() => navigate("/calendar")}
         className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300">
         📅 캘린더 보러가기 | Calendar
-      </button>
-    </div>
-  );
-}
-
-function PDFUploadButton() {
-  const navigate = useNavigate();
-  return (
-    <div className="text-center mb-6">
-      <button
-        onClick={() => navigate("/upload")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300">
-        📁 파일 업로드하기 | Upload your File
       </button>
     </div>
   );

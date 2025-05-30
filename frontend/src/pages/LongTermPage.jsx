@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FileUpload from "../components/FileUpload";
 import axios from "axios";
-import Spinner from "../components/Spinner"; // 🔥 스피너 추가
+import Spinner from "../components/Spinner";
 
 function LongTermPage() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ function LongTermPage() {
   const [hoursPerDay, setHoursPerDay] = useState("");
   const [datePlans, setDatePlans] = useState({});
   const [selectedDates, setSelectedDates] = useState([]);
-  const [loading, setLoading] = useState(false); // 🔥 로딩 상태
+  const [loading, setLoading] = useState(false);
 
   const toStringPlan = (plan) => {
     if (typeof plan === "string") return plan;
@@ -45,9 +45,7 @@ function LongTermPage() {
       fileInfo: uploadedFileInfo,
     };
 
-    // 🔥 로딩 시작
     setLoading(true);
-
     try {
       const res = await axios.post(
         "http://localhost:5000/api/long-term-plan",
@@ -55,25 +53,16 @@ function LongTermPage() {
       );
       console.log("AI로부터 받은 계획:", res.data.datePlans);
 
+      // 생성된 계획 전체 저장
       const stringifiedPlan = toStringPlan(res.data.datePlans);
       setGeneratedPlan(stringifiedPlan || "계획 생성 실패!");
 
-      const datePlansObj = {};
-      let current = new Date(startDate);
-      const end = new Date(endDate);
-      while (current <= end) {
-        const dateStr = current.toISOString().split("T")[0];
-        datePlansObj[dateStr] = toStringPlan(res.data.datePlans);
-        current.setDate(current.getDate() + 1);
-      }
-
-      setDatePlans(datePlansObj);
+      setDatePlans(res.data.datePlans || {});
       setSelectedDates([]);
     } catch (err) {
       console.error(err);
       alert("계획 생성 실패!");
     } finally {
-      // 🔥 로딩 종료
       setLoading(false);
     }
   };
@@ -94,8 +83,11 @@ function LongTermPage() {
 
     const selectedPlans = {};
     selectedDates.forEach((date) => {
-      selectedPlans[date] = datePlans[date];
+      const plan = datePlans[date];
+      const cleanedPlan = plan.replace(`${date}:`, "").trim(); // 날짜 제거
+      selectedPlans[date] = cleanedPlan;
     });
+
 
     console.log("보내는 selectedPlans: ", selectedPlans);
 
@@ -158,30 +150,42 @@ function LongTermPage() {
         AI에게 장기 계획 요청
       </button>
 
-      {/* 🔥 로딩 중 스피너 */}
       {loading && <Spinner />}
-
-      {generatedPlan && (
-        <div className="mt-4 p-2 border rounded bg-gray-50 whitespace-pre-line">
-          <h3 className="font-semibold mb-2">📋 생성된 계획</h3>
-          <pre>{generatedPlan}</pre>
-        </div>
-      )}
 
       {Object.keys(datePlans).length > 0 && (
         <div className="mt-4">
-          <h3 className="font-semibold mb-2">✅ 날짜별로 저장할 계획 선택</h3>
-          {Object.entries(datePlans).map(([date, plan]) => (
-            <div key={date} className="flex items-center mb-2">
-              <input
-                type="checkbox"
-                checked={selectedDates.includes(date)}
-                onChange={() => toggleDateSelection(date)}
-                className="mr-2"
-              />
-              <label>{date}</label>
-            </div>
-          ))}
+          <h3 className="font-semibold mb-2">✅ 날짜별 계획</h3>
+          {Object.entries(datePlans).map(([date, plan]) => {
+            let cleanedPlan = plan;
+
+            // JSON 중첩 처리
+            try {
+              const nested = JSON.parse(plan);
+              if (typeof nested === "object") {
+                cleanedPlan = nested[date] || plan;
+              }
+            } catch (e) {
+              // 그대로 사용
+            }
+
+            cleanedPlan = cleanedPlan.replace(`${date}:`, "").trim();
+
+            return (
+              <div key={date} className="mb-4 p-2 border rounded bg-gray-50">
+                <h4 className="font-semibold mb-1">{date}</h4>
+                <p className="whitespace-pre-line text-sm text-gray-700">{cleanedPlan}</p>
+                <div className="flex items-center mt-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedDates.includes(date)}
+                    onChange={() => toggleDateSelection(date)}
+                    className="mr-2"
+                  />
+                  <label>저장할 날짜 선택</label>
+                </div>
+              </div>
+            );
+          })}
           <button
             onClick={handleSaveSelectedPlans}
             className="px-4 py-2 rounded mt-2 bg-gray-200 hover:bg-gray-300"
@@ -191,12 +195,14 @@ function LongTermPage() {
         </div>
       )}
 
-      <button
-        onClick={() => navigate("/")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4 ml-4"
-      >
-        🏠 홈으로 돌아가기 | Home
-      </button>
+      <div>
+        <button
+          onClick={() => navigate("/")}
+          className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4"
+        >
+          🏠 홈으로 돌아가기 | Home
+        </button>
+      </div>
     </div>
   );
 }

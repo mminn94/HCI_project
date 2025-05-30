@@ -112,7 +112,7 @@ function TodayPage() {
         <ul className="list-disc pl-6 mt-2">
           {lines.map((line, index) => (
             <li key={index} className="flex items-start mb-2">
-              {line.trim().match(/(\*+)?\s*\d+\./) ? (
+              {line.trim().match(/^\d{4}-\d{2}-\d{2}:|(\*+)?\s*\d+\./) || line.trim().startsWith("이론:") ? (
                 <>
                   <input
                     type="checkbox"
@@ -152,18 +152,19 @@ function TodayPage() {
           </button>
         </div>
       )}
-
+      <div>
+        <button
+          onClick={() => navigate("/calendar")}
+          className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4"
+        >
+          📅 캘린더 보러가기 | Calendar
+        </button>
+      </div>
       <button
         onClick={() => navigate("/")}
         className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4"
       >
         🏠 홈으로 돌아가기 | Home
-      </button>
-      <button
-        onClick={() => navigate("/calendar")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 ml-2"
-      >
-        📅 캘린더 보러가기 | Calendar
       </button>
     </div>
   );

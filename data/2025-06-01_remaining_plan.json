@@ -1,1 +1,3 @@
-[]
+[
+  "이론: Prim’s Algorithm 상세 학습 (Adjacency List를 이용한 구현 방식, 우선 큐 (Heap) 활용, 시간 복잡도 O(nm) 분석) / 실습: Prim’s Algorithm 구현 (Python 또는 C++ 등 선택) / 목표: Prim’s Algorithm 구현 완료 및 이해도 점검"
+]
