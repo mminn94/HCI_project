@@ -57,10 +57,10 @@ function PlanFeedback({ updatedPlan }) {
           }
         })}
       </div>
-
       <button
         onClick={handleSaveTodayTasks}
-        className="mt-2 px-4 py-1 text-gray rounded">
+        className="mt-2 px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300"
+        disabled={selectedTodayTasks.length === 0}>
         오늘 할 일 저장
       </button>
     </div>

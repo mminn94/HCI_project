@@ -35,7 +35,7 @@ function PlanDetails({
       <textarea
         value={feedback}
         onChange={(e) => setFeedback(e.target.value)}
-        placeholder="예: 2번 항목을 빼줘 / 시간을 늘려줘"
+        placeholder="예: 2번 항목을 빼줘 / 1순위 시간을 3시간으로 늘려줘"
         className="border p-2 rounded w-full ml-5 mt-2"/>
 
       <button

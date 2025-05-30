@@ -27,6 +27,8 @@ function QuizPage() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [showQuizHistory, setShowQuizHistory] = useState(false);
+
   useEffect(() => {
     const savedTopics = localStorage.getItem("topics");
     const savedHistories = localStorage.getItem("chatHistories");
@@ -82,12 +84,14 @@ function QuizPage() {
         [selectedTopic]: updatedHistory
       });
 
-      if (userInput.toLowerCase().includes("퀴즈")){
-        setQuizResults([
-          ...quizResults,
-          {topic: selectedTopic, quiz: aiResponse}
-        ]);
+      if (userInput.toLowerCase().includes("퀴즈")) {
+        setQuizResults((prevResults) => {
+          const updatedResults = [...prevResults, { topic: selectedTopic, quiz: aiResponse }];
+          localStorage.setItem("quizResults", JSON.stringify(updatedResults));
+          return updatedResults;
+        });
       }
+
 
       setUserInput("");
     } catch (err) {
@@ -100,21 +104,23 @@ function QuizPage() {
     <div className="p-4">
       <h2 className="text-[30px] font-bold mb-4">🧠 Gemma3와 대화하기 | Chat with AI</h2>
       <p className="text-sm text-gray-400 mb-6 ml-3">
-        퀴즈를 진행하려면 "퀴즈 내줘"라고 입력하세요 !</p>
+        퀴즈를 진행하려면 "퀴즈 내줘"라고 입력하세요 !
+      </p>
 
       <div className="flex gap-2 mb-2 flex-wrap">
         {topics.map((topic) => (
           <button
-            key = {topic}
+            key={topic}
             onClick={() => setSelectedTopic(topic)}
-            className="px-3 py-1 h-15 w-35 rounded">
-              {topic}
+            className="px-3 py-1 h-15 w-35 rounded"
+          >
+            {topic}
           </button>
         ))}
       </div>
 
       <div className="flex gap-2 mb-4">
-        <input 
+        <input
           type="text"
           value={newTopic}
           onChange={(e) => setNewTopic(e.target.value)}
@@ -123,20 +129,23 @@ function QuizPage() {
         />
         <button
           onClick={handleAddTopic}
-          className="px-3 py-1 rounded">
-            추가 | add
+          className="px-3 py-1 rounded"
+        >
+          추가 | add
         </button>
       </div>
 
-      {/*대화창*/}
+      {/* 대화창 */}
       <div className="h-70 w-140 overflow-y-auto border p-2 mb-4 rounded">
         {chatHistories[selectedTopic].map((entry, idx) => (
           <div
             key={idx}
-            className={`mb-1 ${entry.sender === "user" ? "text-right" : "text-left"}`}>
+            className={`mb-1 ${entry.sender === "user" ? "text-right" : "text-left"}`}
+          >
             <span
-              className={`block whitespace-pre-line ${entry.sender === "user" ? "text-blue-500" : "text-green-500"} text-base`}>
-                {entry.sender === "user" ? "👤" : "🤖"} {entry.message}
+              className={`block whitespace-pre-line ${entry.sender === "user" ? "text-blue-500" : "text-green-500"} text-base`}
+            >
+              {entry.sender === "user" ? "👤" : "🤖"} {entry.message}
             </span>
           </div>
         ))}
@@ -153,26 +162,40 @@ function QuizPage() {
         />
         <button
           onClick={handleSend}
-          className="px-4 py-1 rounded">
+          className="px-4 py-1 rounded"
+        >
           보내기 | Send
         </button>
       </div>
 
-      <div className="mt-4">
-        <h3 className="text-lg font-semibold">📝 퀴즈 내역 | Quiz</h3>
-        <ul className="list-disc pl-4">
-          {quizResults.map((q, idx) => (
-            <li
-            key={idx}
-            className="whitespace-pre-line"
-            >
-              <strong>{q.topic}:</strong> {q.quiz}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {/* 🟡 퀴즈 내역 토글 버튼 */}
+      {quizResults.length > 0 && (
+        <div className="mt-4">
+          <button
+            onClick={() => setShowQuizHistory(!showQuizHistory)}
+            className="px-4 py-1 rounded bg-purple-300 hover:bg-purple-400 mt-4 mb-2"
+          >
+            {showQuizHistory ? "📝 퀴즈 내역 닫기" : "📝 퀴즈 내역 보기"}
+          </button>
 
-      <button onClick={() => navigate("/")}
+          {/* 토글로 열고 닫는 퀴즈 내역 */}
+          {showQuizHistory && (
+            <div className="mt-2">
+              <h3 className="text-lg font-semibold">📝 퀴즈 내역 | Quiz</h3>
+              <ul className="list-disc pl-4">
+                {quizResults.map((q, idx) => (
+                  <li key={idx} className="whitespace-pre-line">
+                    <strong>{q.topic}:</strong> {q.quiz}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      <button
+        onClick={() => navigate("/")}
         className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4 mb-4">
         🏠 홈으로 돌아가기 | Home
       </button>
