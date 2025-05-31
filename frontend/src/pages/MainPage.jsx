@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import GrayButton from "../components/Button"; // 공통 버튼 컴포넌트 불러오기
 
 function Home() {
   return (
@@ -20,25 +21,16 @@ function HowtouseButton() {
   const navigate = useNavigate();
   return (
     <div className="text-center mb-6">
-      <button
-        onClick={() => navigate("/howtouse")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300">
-        📝 페이지 사용법 | How to Use this Page ?
-      </button>
+      <GrayButton onClick={() => navigate("/howtouse")}>📝 페이지 사용법 | How to Use this Page ?</GrayButton>
     </div>
   );
 }
-
 
 function TodayButton() {
   const navigate = useNavigate();
   return (
     <div className="text-center mb-6">
-      <button
-        onClick={() => navigate("/today")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300">
-        📌 오늘 할 일 보러가기 | Today's Plan
-      </button>
+      <GrayButton onClick={() => navigate("/today")}>📌 오늘 할 일 보러가기 | Today's Plan</GrayButton>
     </div>
   );
 }
@@ -47,11 +39,7 @@ function CalendarButton() {
   const navigate = useNavigate();
   return (
     <div className="text-center mb-6">
-      <button
-        onClick={() => navigate("/calendar")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300">
-        📅 캘린더 보러가기 | Calendar
-      </button>
+      <GrayButton onClick={() => navigate("/calendar")}>📅 캘린더 보러가기 | Calendar</GrayButton>
     </div>
   );
 }
@@ -60,11 +48,7 @@ function QuizButton() {
   const navigate = useNavigate();
   return (
     <div className="text-center mb-6">
-      <button
-        onClick={() => navigate("/quiz")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300">
-        🧠 AI와 대화하러 가기 | Chat with AI
-      </button>
+      <GrayButton onClick={() => navigate("/quiz")}>🧠 AI와 대화하러 가기 | Chat with AI</GrayButton>
     </div>
   );
 }
@@ -73,11 +57,7 @@ function LongTermButton() {
   const navigate = useNavigate();
   return (
     <div className="text-center mb-6">
-      <button
-        onClick={() => navigate("/longterm")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300">
-        🗒️ 장기 계획 생성하러 가기 | Long-term Plans
-      </button>
+      <GrayButton onClick={() => navigate("/longterm")}>🗒️ 장기 계획 생성하러 가기 | Long-term Plan</GrayButton>
     </div>
   );
 }
@@ -86,11 +66,7 @@ function ShortTermButton() {
   const navigate = useNavigate();
   return (
     <div className="text-center mb-6">
-      <button
-        onClick={() => navigate("/shortterm")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300">
-        ⏱️ 단기 계획 생성하러 가기 | Short-term Plans
-      </button>
+      <GrayButton onClick={() => navigate("/shortterm")}>⏱️ 단기 계획 생성하러 가기 | Short-term Plan</GrayButton>
     </div>
   );
 }

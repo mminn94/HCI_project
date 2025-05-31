@@ -53,14 +53,17 @@ def generate_summary():
     text = extract_text_from_pdf(filepath)
 
     prompt_summary = f"""
-    아래 내용을 한국어로 요약해줘:\n
-    내용:
-    {text}
+    아래 내용을 한국어로 간결하고 명확하게 요약해줘.
 
-    작성 시 주의사항:
-    큰 항목은 "1.","2."처럼 번호를 붙여서 정리해줘.
-    각 항목마다 줄바꿈(\n)을 포함해서 보기 좋게 정리해줘.
-    ** 같은 기호 쓰지 말아줘. (즉, 볼드 처리 하지 말아줘)
+    ✅ 요약할 때:
+    - 핵심 내용만 간단히 정리해줘.
+    - 각 항목은 "1.", "2."처럼 번호로 시작해줘.
+    - 전체 요약은 3~5문장으로 제한해줘.
+    - 한눈에 보기 좋게, 문단마다 줄바꿈을 사용해서 정리해줘.
+    - **같은 기호(볼드체 등)는 사용하지 말아줘.**
+
+    📚 요약할 내용:
+    {text}
     """
 
     headers = {"Content-Type": "application/json"}
@@ -100,30 +103,34 @@ def generate_study_plan():
         return jsonify({"error": "파일명과 요약 내용을 입력하세요!"}), 400
 
     prompt_plan = f"""
-    아래 내용을 바탕으로, 이 과목의 학습 계획을 작성해줘.
-    
-    학습 내용 요약:
-    {summary}
+    아래 내용을 바탕으로 이 과목의 학습 계획을 작성해줘.
 
-    작성 시 주의사항:
-    큰 항목(예: 과목, 큰 챕터)은 "1.", "2."처럼 번호를 붙여서 작성해줘.
-    각 항목의 세부 내용은 줄로 구분해줘.
-    최종 결과는 아래 처럼 번호 있는 큰 항목들만 따로 선택할 수 있도록 해줘!
-    그리고 중요한 항목을 순위대로 1,2,3.. 순위로 매겨줘.
-    실제로 공부할 때 참고할 수 있도록 실용적으로 작성해줘.
-    ** 같은 기호 쓰지 말아줘. (즉, 볼드 처리 하지 말아줘)
+    ✅ 작성할 때:
+    - 각 항목은 "1.", "2."처럼 번호로 시작해줘.
+    - 각 항목의 예상 소요 시간(예: "예상 소요 시간: 1시간")을 포함해줘.
+    - 각 항목의 순위(예: "1순위")도 표시해줘.
+    - 각 항목의 세부 내용은 줄바꿈으로 구분해줘. ("* 이론 학습: ...", "* 실습: ..." 형태)
+    - 큰 항목(예: 과목, 큰 챕터)만 따로 선택할 수 있도록 깔끔히 정리해줘.
+    - 최종 결과는 한눈에 보기 좋게 줄바꿈을 사용해 정리해줘.
+    - **같은 기호(볼드체 등)는 사용하지 말아줘.**
+
+    🔍 각 항목 아래에는 짧게 “추천 이유”를 한 문장으로 추가해줘.
+
+    📚 학습 내용 요약:
+    {summary}
 
     예)
     1. 힙 정렬 (예상 소요 시간: 1시간) - 2순위
     * 이론 학습: 힙의 개념
     * 실습: 힙 구현 실습
-    
+    추천 이유: 효율적인 정렬 이해를 위해 중요해.
+
     2. 해시 테이블 (예상 소요 시간: 2시간) - 1순위
     * 이론 학습: 충돌 처리
     * 실습: 해시 구현 실습
-
-    각 항목마다 줄바꿈(\n)을 포함해서 보기 좋게 정리해줘.
+    추천 이유: 필수적인 자료구조이기 때문이야.
     """
+
 
     headers = {"Content-Type": "application/json"}
     data_plan = {
@@ -158,21 +165,23 @@ def update_plan():
     current_plan = data.get("currentPlan")
 
     prompt_update = f"""
-    아래의 학습 계획을 참고해서, 사용자의 피드백을 반영해서 새롭게 계획을 다시 작성해줘.
+    아래의 학습 계획을 참고해서, 사용자의 피드백을 반영해 새로운 계획을 다시 작성해줘.
 
-    기존 학습 계획:
+    ✅ 작성할 때:
+    - 각 항목은 "1.", "2."처럼 번호로 시작해줘.
+    - 각 항목의 예상 소요 시간(예: "예상 소요 시간: 1시간")과 순위(예: "1순위")도 포함해줘.
+    - 각 항목의 세부 내용은 줄로 구분해줘. ("* 이론 학습: ...", "* 실습: ..." 형태)
+    - 각 항목마다 줄바꿈으로 정리해, 보기 좋게 만들어줘.
+    - 최종 결과는 실제 공부에 바로 활용할 수 있도록 실용적으로 작성해줘.
+    - **같은 기호(볼드체 등)는 사용하지 말아줘.**
+
+    🔍 각 항목 아래에는 “사용자 피드백에 따른 변경사항”을 짧게 한 문장으로 설명해줘.
+
+    📚 기존 학습 계획:
     {current_plan}
 
-    사용자 피드백:
+    💬 사용자 피드백:
     {feedback}
-
-    작성 시 주의사항:
-    큰 항목은 "1.", "2."처럼 번호를 붙여서 구분해줘.
-    각 항목의 세부 내용은 줄로 구분해줘.
-    각 항목마다 줄바꿈(\n)을 넣어서 보기 좋게 정리해줘.
-    그리고 중요한 거를 순위대로 1,2,3 .. 순위로 매겨줘.
-    실제로 공부할 때 참고할 수 있도록 실용적으로 작성해줘.
-    ** 같은 기호 쓰지 말아줘. (즉, 볼드 처리 하지 말아줘)
     """
 
     headers = {"Content-Type": "application/json"}
@@ -248,6 +257,8 @@ def save_today_plan():
 
 
 #오늘 완료 항목 저장
+# ✅ today_plan은 그대로 두고, remaining_plan만 갱신
+# 오늘 완료 항목 저장
 @app.route("/api/done-today", methods=["POST"])
 def done_today():
     data = request.get_json()
@@ -256,7 +267,6 @@ def done_today():
     today = datetime.now(KST).strftime('%Y-%m-%d')
 
     done_file = f"data/{today}_done_today.json"
-
     if os.path.exists(done_file):
         with open(done_file, "r", encoding="utf-8") as f:
             done_tasks = json.load(f)
@@ -268,25 +278,28 @@ def done_today():
         if task not in done_tasks:
             done_tasks.append(task)
 
-    # 업데이트된 완료 항목 저장
+    # ✅ 완료 항목 저장만!
     with open(done_file, "w", encoding="utf-8") as f:
         json.dump(done_tasks, f, ensure_ascii=False, indent=2)
 
-    # 남은 할일 갱신
-    study_plan_file = f"data/{today}_today_plan.json"
-    with open(study_plan_file, "r", encoding="utf-8") as f:
-        study_plan = json.load(f)
+    # ✅ remaining_plan만 업데이트
+    today_file = f"data/{today}_today_plan.json"
+    if os.path.exists(today_file):
+        with open(today_file, "r", encoding="utf-8") as f:
+            study_plan = json.load(f)
+        remaining_plan = [task for task in study_plan if task not in done_tasks]
 
-    remaining_plan = [task for task in study_plan if task not in done_tasks]
-
-    remaining_file = f"data/{today}_remaining_plan.json"
-    with open(remaining_file, "w", encoding="utf-8") as f:
-        json.dump(remaining_plan, f, ensure_ascii=False, indent=2)
+        remaining_file = f"data/{today}_remaining_plan.json"
+        with open(remaining_file, "w", encoding="utf-8") as f:
+            json.dump(remaining_plan, f, ensure_ascii=False, indent=2)
+    else:
+        remaining_plan = []
 
     return jsonify({
-        "message": f"{today} 완료 항목 append & 남은 계획 갱신 완료!",
+        "message": f"{today} 완료 항목 저장 완료! (today_plan은 그대로)",
         "remaining_plan": remaining_plan
     })
+
 
 #오늘 할일 삭제
 @app.route("/api/delete-today-task", methods=["POST"])
@@ -447,24 +460,32 @@ def generate_long_term_plan():
     text = extract_text_from_pdf(filepath)
 
     prompt_plan = f"""
-    아래는 내가 업로드한 자료 요약입니다:
+    아래는 내가 업로드한 자료의 요약본이야:
     {text}
 
-    이 자료를 바탕으로 {start_date} ~ {end_date} 동안 매일 {hours_per_day}시간씩 공부할 수 있도록 날짜별로 학습 계획을 작성해줘.
+    이 자료를 바탕으로 {start_date}부터 {end_date}까지 매일 {hours_per_day}시간씩 공부할 수 있도록 날짜별 학습 계획을 작성해줘.
 
-    📌 작성 형식:
-    - 각 날짜는 "날짜: 계획 내용" 형태로 반드시 작성해줘. 예: "2025-06-01: 계획 내용..."
-    - 각 날짜마다 반드시 아래 항목들을 포함해줘:
-    1) 이론 학습: 어떤 이론을 공부할지
-    2) 실습/문제풀이: 어떤 실습/문제풀이를 할지
-    3) 목표/중점 사항: 오늘의 목표/중점 내용 (짧게라도 반드시 포함)
-    - 날짜별 계획은 줄바꿈(\\n)으로 깔끔하게 정리해줘.
-    - ** 같은 기호는 쓰지 말아줘 (볼드 처리하지 말아줘).
-    - 실제로 공부할 때 참고할 수 있도록 실용적으로 작성해줘.
+    ✅ 작성 규칙:
+    - 각 날짜는 "날짜:"로 시작해줘. (예: "2025-06-01:")
+    - 각 날짜별로 아래 항목들을 꼭 포함해줘:
+    * 이론 학습 (예상 소요 시간: ?분): 어떤 내용을 공부할지
+    * 실습/문제풀이 (예상 소요 시간: ?분): 어떤 실습이나 문제풀이를 할지
+    * 목표/중점사항: 오늘의 목표나 중점 내용을 간단히 작성해줘
+    - 각 항목은 줄바꿈으로 정리해줘.
+    - 작성 형식은 아래 예시처럼 간결하고 보기 좋게 만들어줘.
+    - 실제로 공부할 때 참고할 수 있도록 실용적이고 현실적인 내용으로 작성해줘.
+    - **같은 기호(볼드체 등)는 사용하지 말아줘.**
 
     예시:
-    2025-06-01: 이론: A 공부 / 실습: A 실습 / 목표: A 목표
-    2025-06-02: 이론: B 공부 / 실습: B 실습 / 목표: B 목표
+    2025-06-01:
+    이론 학습 (예상 소요 시간: 40분): 힙 정렬의 기본 개념과 동작 원리 정리
+    실습/문제풀이 (예상 소요 시간: 20분): 힙 정렬 구현 문제 풀어보기
+    목표/중점사항: 힙의 자료구조 개념을 명확히 이해하기
+
+    2025-06-02:
+    이론 학습 (예상 소요 시간: 30분): 해시 테이블의 충돌 처리 방식 이해
+    실습/문제풀이 (예상 소요 시간: 30분): 해시 구현 연습 문제 풀어보기
+    목표/중점사항: 해시의 충돌 처리 개념을 확실히 익히기
 
     작성해줘!
     """
@@ -506,7 +527,6 @@ def generate_long_term_plan():
         "datePlans": date_plans
     })
 
-
 #장기 계획 세운 거 날짜 지정해서 저장하기
 @app.route("/api/save-selected-plan", methods=["POST"])
 def save_selected_plan():
@@ -522,6 +542,7 @@ def save_selected_plan():
             json.dump([plan], f, ensure_ascii=False, indent=2)
 
     return jsonify({"message": "선택한 날짜별 계획 저장 완료!"})
+
 
 # ----------------------------------------
 # 단기 계획 세우기
@@ -541,16 +562,18 @@ def generate_short_term_plan():
     text = extract_text_from_pdf(filepath)
 
     prompt_plan = f"""
-아래 내용을 {duration}분 내로 학습할 수 있는 짧은 계획을 작성해줘.
+    아래 내용을 {duration}분 내에 학습할 수 있는 짧고 간결한 계획을 작성해줘.
 
-내용:
-{text}
+    ✅ 작성 규칙:
+    - 핵심적인 큰 항목 위주로 간단히 정리해줘.
+    - 각 항목은 번호로 시작해줘. (예: "1.", "2."처럼)
+    - 각 항목은 줄바꿈으로 정리해서 보기 좋게 만들어줘.
+    - 실제로 공부할 때 참고할 수 있도록 실용적이고 현실적인 톤으로 작성해줘.
+    - **같은 기호(볼드체 등)는 사용하지 말아줘.**
 
-작성 시 주의사항:
-- 간단하게 큰 항목 위주로 정리해줘.
-- 번호와 줄바꿈(\\n)을 포함해서 보기 좋게 해줘.
-- ** 같은 기호 쓰지 말아줘. (볼드 처리하지 말아줘)
-"""
+    📚 학습할 내용:
+    {text}
+    """
 
     headers = {"Content-Type": "application/json"}
     data_plan = {
@@ -590,14 +613,17 @@ def generate_short_term_summary():
     text = extract_text_from_pdf(filepath)
 
     prompt_summary = f"""
-아래 내용을 한국어로 간단히 요약해줘.
-내용:
-{text}
+    아래 내용을 한국어로 간단하고 명확하게 요약해줘.
 
-작성 시 주의사항:
-- 번호와 줄바꿈(\\n)을 포함해 보기 좋게 정리해줘.
-- ** 같은 기호 쓰지 말아줘. (볼드 처리 하지 말아줘.)
-"""
+    ✅ 작성 규칙:
+    - 중요한 내용만 간단히 정리해줘.
+    - 각 항목은 "1.", "2."처럼 번호로 시작해줘.
+    - 각 항목은 줄바꿈으로 정리해서 보기 좋게 만들어줘.
+    - **같은 기호(볼드체 등)는 사용하지 말아줘.**
+
+    📚 요약할 내용:
+    {text}
+    """
 
     headers = {"Content-Type": "application/json"}
     data_summary = {
@@ -637,15 +663,17 @@ def generate_short_term_quiz():
     text = extract_text_from_pdf(filepath)
 
     prompt_quiz = f"""
-아래 내용을 바탕으로 간단한 퀴즈를 만들어줘.
-내용:
-{text}
+    아래 내용을 바탕으로 짧고 명확한 퀴즈를 만들어줘.
 
-작성 시 주의사항:
-- 번호와 줄바꿈(\\n)을 포함해 퀴즈 형태로 정리해줘.
-- 정답은 쓰지 말고, 질문만 줘.
-- ** 같은 기호 쓰지 말아줘. (볼드 처리 하지 말아줘)
-"""
+    ✅ 작성 규칙:
+    - 각 질문은 번호로 시작해줘. (예: "1.", "2."처럼)
+    - 각 질문은 줄바꿈으로 정리해서 보기 좋게 만들어줘.
+    - 정답은 쓰지 말고, 질문만 작성해줘.
+    - **같은 기호(볼드체 등)는 사용하지 말아줘.**
+
+    📚 퀴즈를 만들 내용:
+    {text}
+    """
 
     headers = {"Content-Type": "application/json"}
     data_quiz = {
@@ -683,18 +711,18 @@ def weekly_summary():
     monday = datetime.strptime(f"{year}-W{week_num - 1}-1", "%Y-W%W-%w")
 
     done_counts = []
-    total_counts = []
+    remaining_counts = []
 
     for i in range(7):
         date = (monday + timedelta(days=i)).strftime("%Y-%m-%d")
         done_file = f"data/{date}_done_today.json"
-        today_file = f"data/{date}_today_plan.json"
+        remaining_file = f"data/{date}_remaining_plan.json"
 
         done_tasks = json.load(open(done_file, encoding="utf-8")) if os.path.exists(done_file) else []
-        today_tasks = json.load(open(today_file, encoding="utf-8")) if os.path.exists(today_file) else []
+        remaining_tasks = json.load(open(remaining_file, encoding="utf-8")) if os.path.exists(remaining_file) else []
 
         done_counts.append(len(done_tasks))
-        total_counts.append(len(today_tasks))
+        remaining_counts.append(len(remaining_tasks))
 
     # 날짜 리스트도 같이 반환 (프론트 그래프 X축 표시용)
     dates = [(monday + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(7)]
@@ -702,7 +730,7 @@ def weekly_summary():
     return jsonify({
         "dates": dates,
         "doneCounts": done_counts,
-        "totalCounts": total_counts
+        "remainingCounts": remaining_counts
     })
 
 

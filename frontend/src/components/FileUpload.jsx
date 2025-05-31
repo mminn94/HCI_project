@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import GrayButton from "./Button";
 
 function FileUpload({ onUploadComplete }) {
   const [file, setFile] = useState(null);

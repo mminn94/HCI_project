@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import FileUpload from "../components/FileUpload";
 import axios from "axios";
 import Spinner from "../components/Spinner";
+import GrayButton from "../components/Button";
 
 function LongTermPage() {
   const navigate = useNavigate();
@@ -105,7 +106,7 @@ function LongTermPage() {
 
   return (
     <div className="p-4 max-w-lg mx-auto">
-      <h2 className="text-2xl font-bold mb-4">📚 장기 계획 생성 | Long-term Plan</h2>
+      <h2 className="text-[30px] font-bold mb-4">📚 장기 계획 생성 | Long-term Plan</h2>
 
       <FileUpload
         uploadUrl="http://localhost:5000/api/long-term-upload"
@@ -142,13 +143,7 @@ function LongTermPage() {
           />
         </label>
       </div>
-
-      <button
-        onClick={handleGeneratePlan}
-        className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
-      >
-        AI에게 장기 계획 요청
-      </button>
+      <GrayButton onClick={handleGeneratePlan} className="py-2">AI에게 장기 계획 요청</GrayButton>
 
       {loading && <Spinner />}
 
@@ -186,22 +181,11 @@ function LongTermPage() {
               </div>
             );
           })}
-          <button
-            onClick={handleSaveSelectedPlans}
-            className="px-4 py-2 rounded mt-2 bg-gray-200 hover:bg-gray-300"
-          >
-            선택한 계획 저장
-          </button>
+          <GrayButton onClick={handleSaveSelectedPlans} className="mt-2">선택한 계획 저장</GrayButton>
         </div>
       )}
-
       <div>
-        <button
-          onClick={() => navigate("/")}
-          className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4"
-        >
-          🏠 홈으로 돌아가기 | Home
-        </button>
+        <GrayButton onClick={() => navigate("/")} className="mt-4">🏠 홈으로 돌아가기 | Home</GrayButton>
       </div>
     </div>
   );

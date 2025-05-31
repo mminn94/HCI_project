@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import GrayButton from "../components/Button";
 
 function QuizPage() {
   const navigate = useNavigate();
@@ -91,8 +92,6 @@ function QuizPage() {
           return updatedResults;
         });
       }
-
-
       setUserInput("");
     } catch (err) {
       console.error(err);
@@ -127,12 +126,7 @@ function QuizPage() {
           placeholder="새로운 주제 입력"
           className="flex-1 border px-2 py-1 rounded"
         />
-        <button
-          onClick={handleAddTopic}
-          className="px-3 py-1 rounded"
-        >
-          추가 | add
-        </button>
+        <GrayButton onClick={handleAddTopic} className="px-3">추가 | add</GrayButton>
       </div>
 
       {/* 대화창 */}
@@ -160,12 +154,7 @@ function QuizPage() {
           className="flex-1 border rounded px-2 py-1"
           placeholder="질문을 입력하세요"
         />
-        <button
-          onClick={handleSend}
-          className="px-4 py-1 rounded"
-        >
-          보내기 | Send
-        </button>
+        <GrayButton onClick={handleSend}>보내기 | Send</GrayButton>
       </div>
 
       {/* 🟡 퀴즈 내역 토글 버튼 */}
@@ -173,7 +162,7 @@ function QuizPage() {
         <div className="mt-4">
           <button
             onClick={() => setShowQuizHistory(!showQuizHistory)}
-            className="px-4 py-1 rounded bg-purple-300 hover:bg-purple-400 mt-4 mb-2"
+            className="px-4 py-1 rounded mt-4 mb-2"
           >
             {showQuizHistory ? "📝 퀴즈 내역 닫기" : "📝 퀴즈 내역 보기"}
           </button>
@@ -193,12 +182,7 @@ function QuizPage() {
           )}
         </div>
       )}
-
-      <button
-        onClick={() => navigate("/")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4 mb-4">
-        🏠 홈으로 돌아가기 | Home
-      </button>
+      <GrayButton onClick={() => navigate("/")} className="mt-4">🏠 홈으로 돌아가기 | Home</GrayButton>
     </div>
   );
 }

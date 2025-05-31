@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import GrayButton from "../components/Button";
 
 function TodayPage() {
   const [todayTasks, setTodayTasks] = useState([]);
   const [doneTasks, setDoneTasks] = useState([]);
   const navigate = useNavigate();
 
-  // ⭐ 공통 문자열 처리 함수 ⭐
   const toStringTasks = (tasks) => {
     return (tasks || []).map((task) => {
       if (typeof task === "string") return task;
@@ -44,18 +44,19 @@ function TodayPage() {
         doneTasks,
       });
       console.log(res.data.message);
+      alert("오늘 완료 항목이 저장되었어요!");
 
-      // 문자열로 처리해서 저장
-      const stringTasks = toStringTasks(res.data.remaining_plan);
+      // ✅ 다시 오늘 할 일 전체를 GET으로 불러와서 최신 상태로 갱신!
+      const todayRes = await axios.get("http://localhost:5000/api/today-plan");
+      const stringTasks = toStringTasks(todayRes.data.todayTasks);
       setTodayTasks(stringTasks);
 
-      console.log("남은 계획:", stringTasks);
-      alert("오늘 완료 항목이 저장되었어요!");
     } catch (err) {
       console.error(err);
       alert("저장 실패!");
     }
   };
+
 
   const handleDeleteTask = async (task) => {
     try {
@@ -93,18 +94,12 @@ function TodayPage() {
     }
   };
 
-  // ⭐ 문자열 배열에서 줄바꿈 기준으로 쪼개기
   const lines = todayTasks.flatMap((task) => task.split("\n"));
 
   return (
     <div className="p-4">
       <h2 className="text-[30px] font-bold mb-2">📌 오늘 할 일 | Today's Plan</h2>
-      <button
-        onClick={() => navigate("/upload")}
-        className="px-4 py-1 text-gray rounded mt-4"
-      >
-        📁 파일 업로드로 이동
-      </button>
+      <GrayButton onClick={() => navigate("/upload")} className="mt-4">📁 파일 업로드로 이동</GrayButton>
 
       {lines.length === 0 ? (
         <p className="mt-5">오늘 할 일이 아직 없습니다.</p>
@@ -112,7 +107,7 @@ function TodayPage() {
         <ul className="list-disc pl-6 mt-2">
           {lines.map((line, index) => (
             <li key={index} className="flex items-start mb-2">
-              {line.trim().match(/^\d{4}-\d{2}-\d{2}:|(\*+)?\s*\d+\./) || line.trim().startsWith("이론:") ? (
+              {line.trim().match(/^\d{4}-\d{2}-\d{2}:|(\*+)?\s*\d+\./) || line.trim().startsWith("이론") ? (
                 <>
                   <input
                     type="checkbox"
@@ -121,18 +116,8 @@ function TodayPage() {
                     className="mr-2 mt-1"
                   />
                   <span className="flex-1 whitespace-pre-line">{line}</span>
-                  <button
-                    onClick={() => handleDeleteTask(line)}
-                    className="px-2 py-1 text-gray rounded ml-4"
-                  >
-                    ❎ 삭제
-                  </button>
-                  <button
-                    onClick={() => handleDeferTask(line)}
-                    className="px-2 py-1 text-gray rounded ml-2"
-                  >
-                    🔜 미루기
-                  </button>
+                  <GrayButton onClick={() => handleDeleteTask(line)} className="px-2 py-1 ml-4"> ❎ 삭제 </GrayButton>
+                  <GrayButton onClick={() => handleDeferTask(line)} className="px-2 py-1 ml-2"> 🔜 미루기 </GrayButton>
                 </>
               ) : (
                 <span className="flex-1 whitespace-pre-line ml-8">{line}</span>
@@ -144,28 +129,13 @@ function TodayPage() {
 
       {lines.length > 0 && (
         <div className="flex gap-2 mt-4">
-          <button
-            onClick={handleDoneTodaySubmit}
-            className="px-4 py-1 text-gray rounded"
-          >
-            ✅ 완료 항목 저장하기
-          </button>
+          <GrayButton onClick={handleDoneTodaySubmit}>✅ 완료 항목 저장하기</GrayButton>
         </div>
       )}
       <div>
-        <button
-          onClick={() => navigate("/calendar")}
-          className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4"
-        >
-          📅 캘린더 보러가기 | Calendar
-        </button>
+        <GrayButton onClick={() => navigate("/calendar")} className="mt-4">📅 캘린더 보러가기 | Calendar</GrayButton>
       </div>
-      <button
-        onClick={() => navigate("/")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4"
-      >
-        🏠 홈으로 돌아가기 | Home
-      </button>
+      <GrayButton onClick={() => navigate("/")} className="mt-4">🏠 홈으로 돌아가기 | Home</GrayButton>
     </div>
   );
 }

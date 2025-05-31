@@ -4,6 +4,7 @@ import "react-calendar/dist/Calendar.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import GrayButton from "../components/Button";
 
 function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -52,7 +53,7 @@ function CalendarPage() {
       const data = res.data.dates.map((date, idx) => ({
         date: date,
         완료: res.data.doneCounts[idx],
-        전체: res.data.totalCounts[idx],
+        남은계획: res.data.remainingCounts[idx],
       }));
 
       setWeeklyData(data);
@@ -108,12 +109,9 @@ function CalendarPage() {
       {/* 🚀 토글 버튼 */}
       {weeklyData.length > 0 && (
         <div className="mt-4">
-          <button
-            onClick={() => setShowWeeklySummary(!showWeeklySummary)}
-            className="px-4 py-2 rounded bg-purple-300 hover:bg-purple-400 mt-4 mb-2"
-          >
+          <GrayButton onClick={() => setShowWeeklySummary(!showWeeklySummary)} className="mt-4 mb-2">
             {showWeeklySummary ? "📊 주간 요약 닫기" : "📊 주간 요약 보기"}
-          </button>
+          </GrayButton>
 
           {showWeeklySummary && (
             <div className="mt-4">
@@ -130,18 +128,13 @@ function CalendarPage() {
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="완료" stroke="#82ca9d" />
-                <Line type="monotone" dataKey="전체" stroke="#8884d8" />
+                <Line type="monotone" dataKey="남은계획" stroke="#8884d8" />
               </LineChart>
             </div>
           )}
         </div>
       )}
-
-      <button
-        onClick={() => navigate("/")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-2 mb-4">
-        🏠 홈으로 돌아가기 | Home
-      </button>
+      <GrayButton onClick={() => navigate("/")} className="mt-4 mb-4">🏠 홈으로 돌아가기 | Home</GrayButton>
     </div>
   );
 }

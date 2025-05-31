@@ -5,6 +5,7 @@ import PlanContainer from "../components/PlanContainer";
 import PlanFeedback from "../components/PlanFeedback";
 import axios from "axios";
 import Spinner from "../components/Spinner"; // 로딩 스피너 컴포넌트 추가
+import GrayButton from "../components/Button";
 
 function PDFUpload() {
   const [uploadedFile, setUploadedFile] = useState(null); // 업로드된 파일 정보
@@ -47,8 +48,8 @@ function PDFUpload() {
   };
 
   return (
-    <div className="p-4 max-w-xl">
-      <h2 className="text-[30px] font-bold mb-2">📁 오늘 할 일 PDF 업로드 | Upload your File for your TODAY'S Study</h2>
+    <div className="p-4">
+      <h2 className="text-[30px] font-bold mb-2">📁 PDF 업로드 | Upload your PDF File</h2>
 
       {/* 1️⃣ 파일 업로드 */}
       <FileUpload
@@ -60,28 +61,26 @@ function PDFUpload() {
       {loading && <Spinner />}
 
       {/* 2️⃣ 요약과 계획 보여주는 컴포넌트 */}
-      <PlanContainer
-        summary={summary}
-        studyPlan={studyPlan}
-        setUpdatedPlan={setUpdatedPlan}
-      />
+      <div className="max-w-screen-xl">
+        <PlanContainer
+          summary={summary}
+          studyPlan={studyPlan}
+          setUpdatedPlan={setUpdatedPlan}
+        />
+      </div>
+
 
       {/* 3️⃣ 사용자 피드백 입력 */}
-      <PlanFeedback updatedPlan={updatedPlan} />
+      <div className="max-w-screen-xl">
+        <PlanFeedback updatedPlan={updatedPlan} />
+      </div>
+
 
       {/* 홈/오늘 할 일로 이동 */}
-      <button
-        onClick={() => navigate("/")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mt-4 mb-4"
-      >
-        🏠 홈으로 돌아가기 | Home
-      </button>
-      <button
-        onClick={() => navigate("/today")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300 mb-4"
-      >
-        📌 오늘 할 일로 돌아가기 | Today's Plan
-      </button>
+      <GrayButton onClick={() => navigate("/")} className="mt-4 mb-4">🏠 홈으로 돌아가기 | Home</GrayButton>
+      <div>
+        <GrayButton onClick={() => navigate("/today")}>📌 오늘 할 일 보러가기 | Today's Plan</GrayButton>
+      </div>
     </div>
   );
 }

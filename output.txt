@@ -1,107 +1,83 @@
-6.7.1
-Implemetations of Prim’s Algorithm
-The following is a straightforward implementation of Prim’s algorithm.
-Input: Connected undirected weighted graph G as adjacency list
-Output: the edges of a minimum spanning tree of G
-Init:
-X <- {s}
-// s is an arbitrarily chosen vertex.
-T <- {}
-// chosen edges; initially empty.
-Main loop:
-for n-1 iterations
-Among edges (u,v) with u in X and v not in X
-Take (u*,v*) with minimum weight
-Add v* into X
-Add (u*,v*) into T
-return T
-What is the running time of this implementation? Answer: O(nm). At each iteration, we
-need to do the validity check for all the edges, that is whether, for (u, v), u →X and v ↑→X.
-Improvement using heap-based priority queue
-We can improve using a heap-based
-priority queue. Together with the usual pop() and push(), we use update key operation that
-runs, again, in O(log n) time. [[ Revise the code in the style of Dijkstra!!! ]]
+6.6.2
+All-pairs shortest path
+Now, consider the following graph and its distance matrix:
+D =
+
+
+
+
+
+
+
+
+0
 1
-Init:
-2
-X <- {s}; T <- {}
-3
-Q: priority queue (of vertices with keys)
-4
+→
+1
 5
-for each v != s
-6
-if there is edge (s,v)
-7
-key(v) <- w(s,v);
-e(v) <- (s,v)
-8
-else
-9
-key(v) <- infty;
-e(v) <- NULL
-10
-push(v)
-11
-12
-Main loop:
-13
-while Q is non-empty
-14
-v* <- pop()
-// the closest vertex chosen.
-15
-Add v* into X
-16
-Add e(v*) into T
-17
-// update keys
-18
-for each edge (v*,y) with y not in X
-// we’re using adj list!
-19
-if w(v*,y) < key(y)
-20
-update key(y) <- w(v*,y); e(y) <- (v*,y)
-21
-return T
-107
-"
-우선큐
-"
-개번.
-The loop in the initialization (lines 5–10) performs n heap operations. Therefore, it takes
-O(n log n) time. The main loop has n ↓1 iterations, in which we have a heap operation and
-constant-time operations (lines 14–16) and a for loop (lines 18–20). Except for the for loop, it
-takes O(n log n) time. Now, the inner for loop itself is hard to estimate, but during the overall
-lifetime of the main loop, O(m) edges are checked for key updates, and so, it takes O(m log n).
-Therefore, in total, the running time is O((n + m) log n).
-6.7.2
-Implementation of Kruskal’s algorithm
-While Prim’s algorithm grows a single tree that eventually becomes the minimum spanning
-tree, Kruskal’s algorithm maintains a subgraph that can have more than one component, which
-grows to become a minimum spanning tree. For example, see the following illustration:
-Figure 13: An illustration of Kruskal’s algorithm.
-Edges are added in the order of weights, and note that the edge of weight 6 could not be
-added because it makes a cycle. Now, let us see the following straightforward implementation
-of Kruskal’s algorithm:
-Input: Connected undirected weighted graph G as adjacency list
-Output: the edges of a minimum spanning tree of G
-Preprocessing:
-S <- {}
-// chosen edges; initially empty. S for subgraph :)
-Sort edges by weights
-Main loop:
-for each edge e, in increasing order of weight
-if S and e does not make a cycle
-108
-꼭집점6개
-d
-edge
-y개
-ㅇ
-↳이거해도우선은cycle안생니까.
--
-따라서정렬
-개→
-O nlogn)
+→
+0
+3
+2
+→
+→
+→
+0
+4
+→
+→
+→
+2
+0
+3
+3
+→
+→
+→
+0
+
+
+
+
+
+
+
+
+In general, we consider a graph G whose vertices are 1, 2, . . . , n, and will consider a sequence of
+matrices
+D = D(0), D(1), D(2), . . . , D(n),
+where D(k) is the k-distance matrix, that is, its (i, j)th entry D(k)
+i,j is the length of the shortest
+path from vertex i to j, using only vertices 1, 2, . . . , k. (In short, k-distance between i and j.)
+Make sure that D(0) = D makes sense, since Di,j is the distance between i and j without
+using any other vertices as intermediates, i.e., only the edge (i, j). The matrix D(n) contains
+the information that we are seeking, i.e., the shortest distances between two vertices.
+Recursive structure of optimality
+Note that we are using 1, 2, . . . , n as vertices. In the
+following, vi’s are variables that take a value from 1, . . . , n.
+Proposition 17. If v1v2 . . . vm . . . vl be a shortest path from v1 to vl, then the subpaths v1 . . . vm
+and vm . . . vl are shortest paths. Also, the same thing holds for paths that uses only 1, . . . , k as
+intermediates.
+Proof. Suppose that v1v2 . . . vm→1vm is not shortest and there is a shorter path from v1v↑
+2 . . . v↑
+m→1vm.
+Then there is a shorter path v1v↑
+2 . . . v↑
+m→1vm . . . vl, a contradiction. Therefore, v1v2 . . . vm→1vm
+is the shortest, and the same argument holds for vm . . . vl. Also, the claim about paths using
+only 1, . . . , k as intermediates is proved similarly.
+By deﬁnition of D(k) and the above observations, the following holds.
+Proposition 18.
+D(k)
+i,j = min
+'
+D(k→1)
+i,j
+, D(k→1)
+i,k
++ D(k→1)
+k,j
+(
+This (recursive) equation itself says how to compute D(n): use D(k→1) to compute D(k), for
+k = 1, . . . , n ↑1. So we have a dynamic programming algorithm that computes D(n).
+100

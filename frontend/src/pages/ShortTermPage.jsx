@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FileUpload from "../components/FileUpload";
 import axios from "axios";
+import GrayButton from "../components/Button";
+import LoadingSpinner from "../components/Spinner";
 
 function ShortTermPage() {
   const navigate = useNavigate();
@@ -10,6 +12,7 @@ function ShortTermPage() {
   const [shortPlan, setShortPlan] = useState("");
   const [summary, setSummary] = useState("");
   const [quiz, setQuiz] = useState("");
+  const [loading, setLoading] = useState(false); // ✅ 로딩 상태
 
   const handleUploadComplete = (data) => {
     console.log("파일 업로드 완료:", data);
@@ -21,6 +24,7 @@ function ShortTermPage() {
       alert("파일과 시간을 선택하세요!");
       return;
     }
+    setLoading(true);
     try {
       const res = await axios.post("http://localhost:5000/api/short-term-plan", {
         filename: uploadedFile,
@@ -30,6 +34,8 @@ function ShortTermPage() {
     } catch (err) {
       console.error(err);
       alert("계획 생성 실패!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,6 +44,7 @@ function ShortTermPage() {
       alert("파일을 먼저 업로드하세요!");
       return;
     }
+    setLoading(true);
     try {
       const res = await axios.post("http://localhost:5000/api/short-term-summary", {
         filename: uploadedFile,
@@ -46,6 +53,8 @@ function ShortTermPage() {
     } catch (err) {
       console.error(err);
       alert("요약 실패!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,6 +63,7 @@ function ShortTermPage() {
       alert("파일을 먼저 업로드하세요!");
       return;
     }
+    setLoading(true);
     try {
       const res = await axios.post("http://localhost:5000/api/short-term-quiz", {
         filename: uploadedFile,
@@ -62,6 +72,8 @@ function ShortTermPage() {
     } catch (err) {
       console.error(err);
       alert("퀴즈 생성 실패!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,55 +98,52 @@ function ShortTermPage() {
         ))}
       </div>
 
-      <button
-        onClick={handleGeneratePlan}
-        className="px-4 py-2 rounded mb-4">
+      <GrayButton onClick={handleGeneratePlan} className="mb-4">
         AI에게 짧은 계획 요청
-      </button>
+      </GrayButton>
 
-    <div className="mb-4">
-      {/* 요약 버튼 */}
-      <button
-        onClick={handleSummary}
-        className="px-4 py-2 rounded">
-        📚 요약 보기
-      </button>
+      <div className="mb-4">
+        {/* 요약 버튼 */}
+        <GrayButton onClick={handleSummary} className="mr-2">
+          📚 요약 보기
+        </GrayButton>
 
-      {/* 퀴즈 버튼 */}
-      <button
-        onClick={handleQuiz}
-        className="px-4 py-2 rounded ml-4">
-        🧠 퀴즈 풀기
-      </button>
-    </div>
+        {/* 퀴즈 버튼 */}
+        <GrayButton onClick={handleQuiz}>
+          🧠 퀴즈 풀기
+        </GrayButton>
+      </div>
+
+      {/* ✅ 로딩 중에 스피너 표시 */}
+      {loading && <LoadingSpinner />}
 
       {/* 결과 표시 */}
       {shortPlan && (
-        <div className="mt-4 p-2 bg-gray-50 whitespace-pre-line">
+        <div className="mt-4 p-2 whitespace-pre-wrap break-words overflow-x-auto bg-gray-100 rounded">
           <h3 className="font-semibold">✅ 짧은 계획</h3>
-          <pre>{shortPlan}</pre>
+          <div>{shortPlan}</div>
         </div>
       )}
 
       {summary && (
-        <div className="mt-4 p-2 bg-gray-50 whitespace-pre-line">
+        <div className="mt-4 p-2 whitespace-pre-wrap break-words overflow-x-auto bg-gray-100 rounded">
           <h3 className="font-semibold">📚 요약</h3>
-          <pre>{summary}</pre>
+          <div>{summary}</div>
         </div>
       )}
 
       {quiz && (
-        <div className="mt-4 p-2 bg-gray-50 whitespace-pre-line">
+        <div className="mt-4 p-2 whitespace-pre-wrap break-words overflow-x-auto bg-gray-100 rounded">
           <h3 className="font-semibold">📝 퀴즈</h3>
-          <pre>{quiz}</pre>
+          <div>{quiz}</div>
         </div>
       )}
 
-      <button
+      <GrayButton
         onClick={() => navigate("/")}
-        className="px-4 py-1 text-gray rounded bg-gray-200 hover:bg-gray-300">
+        className="mt-4 text-gray rounded bg-gray-200 hover:bg-gray-300">
         🏠 홈으로 돌아가기 | Home
-      </button>
+      </GrayButton>
     </div>
   );
 }
